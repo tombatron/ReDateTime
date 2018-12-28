@@ -17,7 +17,15 @@ int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 
     int weekOfYear = (int)ceil((double)parsedTime->tm_yday / 7.0f);
 
-    RedisModule_ReplyWithArray(ctx, 2);
+    RedisModule_ReplyWithArray(ctx, 4);
+
+    char *yearLabelString = "year";
+    RedisModuleString *yearLabel = RedisModule_CreateString(ctx, yearLabelString, sizeof(char) * 4);
+    RedisModule_ReplyWithString(ctx, yearLabel);
+
+    int yearValueInt = parsedTime->tm_year + 1900;
+    RedisModuleString *yearValue = RedisModule_CreateStringPrintf(ctx, "%d", yearValueInt);
+    RedisModule_ReplyWithString(ctx, yearValue);
 
     char *stringWeekOfYearLabel = "week_of_year";
     RedisModuleString *weekOfYearLabel = RedisModule_CreateString(ctx, stringWeekOfYearLabel, sizeof(char) * 12);
@@ -25,6 +33,9 @@ int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 
     RedisModuleString *weekOfYearValue = RedisModule_CreateStringPrintf(ctx, "%d", weekOfYear);
     RedisModule_ReplyWithString(ctx, weekOfYearValue);
+
+    RedisModule_Free(yearLabel);
+    RedisModule_Free(yearValue);
 
     RedisModule_Free(weekOfYearLabel);
     RedisModule_Free(weekOfYearValue);
