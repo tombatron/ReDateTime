@@ -17,15 +17,22 @@ int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 
     int weekOfYear = (int)ceil((double)parsedTime->tm_yday / 7.0f);
 
-    RedisModule_ReplyWithArray(ctx, 6);
+    RedisModule_ReplyWithArray(ctx, 8);
 
     char *monthLabelString = "month";
-    RedisModuleString *monthLabel = RedisModule_CreateString(ctx, monthLabelString, sizeof(char) * 4);
+    RedisModuleString *monthLabel = RedisModule_CreateString(ctx, monthLabelString, sizeof(char) * 5);
     RedisModule_ReplyWithString(ctx, monthLabel);
 
     int monthValueInt = parsedTime->tm_mon + 1;
     RedisModuleString *monthValue = RedisModule_CreateStringPrintf(ctx, "%d", monthValueInt);
     RedisModule_ReplyWithString(ctx, monthValue);
+
+    char *dayLabelString = "day";
+    RedisModuleString *dayLabel = RedisModule_CreateString(ctx, dayLabelString, sizeof(char) * 3);
+    RedisModule_ReplyWithString(ctx, dayLabel);
+
+    RedisModuleString *dayValue = RedisModule_CreateStringPrintf(ctx, "%d", parsedTime->tm_mday);
+    RedisModule_ReplyWithString(ctx, dayValue);    
 
     char *yearLabelString = "year";
     RedisModuleString *yearLabel = RedisModule_CreateString(ctx, yearLabelString, sizeof(char) * 4);
@@ -44,6 +51,9 @@ int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 
     RedisModule_Free(monthLabel);
     RedisModule_Free(monthValue);
+
+    RedisModule_Free(dayLabel);
+    RedisModule_Free(dayValue);
 
     RedisModule_Free(yearLabel);
     RedisModule_Free(yearValue);
