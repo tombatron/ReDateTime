@@ -4,6 +4,33 @@
 #include "redismodule.h"
 #include "rmutil/strings.h"
 
+struct TimeDescription
+{
+    int weekOfYear;
+    int month;
+    int day;
+    int year;
+}
+
+struct TimeDescription GetDateTimeDetails(long epochTime);
+
+struct TimeDescription GetDateTimeDetails(long epochTime)
+{
+    time_t convertedTime = epochTime;
+    struct tm *wt = localtime(&convertedTime);
+
+    struct TimeDescription *td = RedisModule_Alloc(sizeof *x);
+
+    td->weekOfYear = (int)ceil((double)wt->tm_yday / 7.0f);
+    td->month = wt->tm_mon + 1;
+    td->day = wt->tm_mday;
+    td->year = wt->tm_year + 1900;
+
+    return td;
+}
+
+
+
 int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 {
     const char *sargs[argc];
