@@ -83,6 +83,20 @@ int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
     return DisplayTimeDescription(ctx, td);
 }
 
+int DateTimeNow(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
+{
+    RedisModule_AutoMemory(ctx);
+
+    RedisModuleCallReply *reply = RedmisModule_Call(ctx, "TIME");
+    RedisModuleCallReply *sub_reply = RedmisModule_CallReplyArrayElement(reply, 0);
+
+    long epoch_time = (long)RedisModle_CallReplyInteger(sub_reply);
+
+    struct TimeDescription td = GetDateTimeDetails(epoch_time);
+
+    return DisplayTimeDescription(ctx, td);
+}
+
 int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
 {
     if (RedisModule_Init(ctx, "datetime", 1, REDISMODULE_APIVER_1) == REDISMODULE_ERR)
