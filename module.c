@@ -65,8 +65,6 @@ int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td)
     RedisModuleString *epochLabel = RedisModule_CreateString(ctx, epochLabelString, sizeof(char) * 5);
     RedisModule_ReplyWithString(ctx, epochLabel);
 
-    
-
     return REDISMODULE_OK;
 }
 
