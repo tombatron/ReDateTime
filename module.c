@@ -45,7 +45,7 @@ int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td)
     RedisModule_ReplyWithString(ctx, dayLabel);
 
     RedisModuleString *dayValue = RedisModule_CreateStringPrintf(ctx, "%d", td.day);
-    RedisModule_ReplyWithString(ctx, dayValue);    
+    RedisModule_ReplyWithString(ctx, dayValue);
 
     char *yearLabelString = "year";
     RedisModuleString *yearLabel = RedisModule_CreateString(ctx, yearLabelString, sizeof(char) * 4);
@@ -105,6 +105,11 @@ int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
     }
 
     if (RedisModule_CreateCommand(ctx, "datetime.info", DateTimeInfo, "readonly", 1, 1, 1) == REDISMODULE_ERR)
+    {
+        return REDISMODULE_ERR;
+    }
+
+    if (RedisModule_CreateCommand(ctx, "datetime.now", DateTimeNow, "readonly", 1, 1, 1) == REDISMODULE_ERR)
     {
         return REDISMODULE_ERR;
     }
