@@ -13,9 +13,6 @@ struct TimeDescription
     long epoch;
 };
 
-struct TimeDescription GetDateTimeDetails(long epochTime);
-int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td);
-
 struct TimeDescription GetDateTimeDetails(long epochTime)
 {
     time_t convertedTime = epochTime;
@@ -34,7 +31,7 @@ struct TimeDescription GetDateTimeDetails(long epochTime)
 
 int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td)
 {
-    RedisModule_ReplyWithArray(ctx, 8);
+    RedisModule_ReplyWithArray(ctx, 10);
 
     char *monthLabelString = "month";
     RedisModuleString *monthLabel = RedisModule_CreateString(ctx, monthLabelString, sizeof(char) * 5);
@@ -63,6 +60,12 @@ int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td)
 
     RedisModuleString *weekOfYearValue = RedisModule_CreateStringPrintf(ctx, "%d", td.weekOfYear);
     RedisModule_ReplyWithString(ctx, weekOfYearValue);
+
+    char *epochLabelString = "epoch";
+    RedisModuleString *epochLabel = RedisModule_CreateString(ctx, epochLabelString, sizeof(char) * 5);
+    RedisModule_ReplyWithString(ctx, epochLabel);
+
+    
 
     return REDISMODULE_OK;
 }
