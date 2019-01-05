@@ -10,9 +10,11 @@ struct TimeDescription
     int month;
     int day;
     int year;
+    long epoch;
 };
 
 struct TimeDescription GetDateTimeDetails(long epochTime);
+int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td);
 
 struct TimeDescription GetDateTimeDetails(long epochTime)
 {
@@ -21,6 +23,7 @@ struct TimeDescription GetDateTimeDetails(long epochTime)
 
     struct TimeDescription td;
 
+    td.epoch = epochTime;
     td.weekOfYear = (int)ceil((double)wt->tm_yday / 7.0f);
     td.month = wt->tm_mon + 1;
     td.day = wt->tm_mday;
@@ -29,18 +32,8 @@ struct TimeDescription GetDateTimeDetails(long epochTime)
     return td;
 }
 
-int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
+int DisplayTimeDescription(RedisModuleCtx *ctx, struct TimeDescription td)
 {
-    RedisModule_AutoMemory(ctx);
-
-    const char *sargs[argc];
-    RMUtil_StringConvert(argv, sargs, argc, RMUTIL_STRINGCONVERT_COPY);
-
-    long timeStamp;
-    sscanf(sargs[1], "%ld", &timeStamp);
-
-    struct TimeDescription td = GetDateTimeDetails(timeStamp);
-
     RedisModule_ReplyWithArray(ctx, 8);
 
     char *monthLabelString = "month";
@@ -72,6 +65,21 @@ int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
     RedisModule_ReplyWithString(ctx, weekOfYearValue);
 
     return REDISMODULE_OK;
+}
+
+int DateTimeInfo(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
+{
+    RedisModule_AutoMemory(ctx);
+
+    const char *sargs[argc];
+    RMUtil_StringConvert(argv, sargs, argc, RMUTIL_STRINGCONVERT_COPY);
+
+    long timeStamp;
+    sscanf(sargs[1], "%ld", &timeStamp);
+
+    struct TimeDescription td = GetDateTimeDetails(timeStamp);
+
+    return DisplayTimeDescription(ctx, td);
 }
 
 int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc)
